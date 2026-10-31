@@ -222,3 +222,111 @@ main { padding: 0 24px; max-width: 1600px; margin: 0 auto; }
   .footer-bottom > span:first-child { display: block; margin-bottom: 6px; }
   .search-input-wrap input { font-size: 20px; }
 }
+
+/* Multi-page views */
+.listing-page { padding-top: 28px; }
+.listing-heading { border-top: 3px double var(--ink); padding: 28px 0 32px; }
+.listing-heading h1 { font: 600 clamp(44px, 7vw, 92px)/.95 'Libre Baskerville', Georgia, serif; letter-spacing: -.08em; margin: 8px 0 14px; }
+.listing-heading p { color: var(--muted); max-width: 510px; font-size: 14px; line-height: 1.5; margin: 0; }
+.listing-grid { border-top: 1px solid var(--ink); display: grid; grid-template-columns: repeat(3, 1fr); gap: 0 24px; }
+.listing-grid .story-link { padding: 25px 0 28px; border-bottom: 1px solid var(--rule); }
+.listing-grid .story-link::before { content: ''; display: block; height: 220px; margin: -25px 0 21px; background: linear-gradient(120deg, #e3e0da, #93968d); background-size: cover; }
+.listing-grid .story-link:nth-child(3n + 1)::before { background-image: url('https://framerusercontent.com/images/HrzhdK951MdOyDYIuPkAA3FXQ.jpg?width=1600&height=1067'); }
+.listing-grid .story-link:nth-child(3n + 2)::before { background-image: url('https://framerusercontent.com/images/LsxfwkLQI2zL3JoIdmTCWDWXkws.jpg?width=1600&height=1067'); }
+.listing-grid .story-link:nth-child(3n)::before { background-image: url('https://framerusercontent.com/images/TKGFuCy5HULhjiXl1pJoAes0SM.jpg?width=1600&height=1067'); }
+.article-page { padding: 38px 0 80px; border-top: 3px double var(--ink); }
+.article-copy { max-width: 900px; margin: 0 auto; }
+.article-copy h1 { font: 600 clamp(44px, 8vw, 104px)/.95 'Libre Baskerville', Georgia, serif; letter-spacing: -.08em; margin: 12px 0 22px; }
+.article-dek { color: #5f5b55; font-size: 17px; line-height: 1.5; max-width: 650px; }
+.article-copy .big-story-meta { margin: 22px 0 26px; }
+.article-image { display: block; width: 100%; max-height: 610px; object-fit: cover; margin: 0 0 26px; }
+.article-copy > p:not(.article-dek) { max-width: 680px; color: #4f4b45; font: 400 16px/1.7 'Libre Baskerville', Georgia, serif; }
+
+/* Native recreation of the supplied Inkvora video page */
+.ink-page { background: #101010; color: #f5f2ec; min-height: 100vh; font-family: 'DM Sans', Arial, sans-serif; }
+.ink-header { height: 72px; padding: 0 30px; display: flex; align-items: center; gap: 50px; border-bottom: 1px solid #282828; }
+.ink-logo { color: #f5f2ec; font: 700 20px/1 'Libre Baskerville', Georgia, serif; letter-spacing: .08em; }
+.ink-header nav { display: flex; align-items: center; gap: clamp(14px, 2vw, 31px); flex: 1; }
+.ink-header nav a, .ink-actions button { color: #c8c5bf; font-size: 11px; text-decoration: none; transition: color .2s ease; }
+.ink-header nav a:hover, .ink-header nav a.active, .ink-actions button:hover { color: #f5f2ec; }
+.ink-actions { display: flex; align-items: center; gap: 22px; }
+.ink-actions button { background: transparent; border: 0; font-size: 23px; line-height: 1; padding: 0; }
+.ink-actions a { color: #101010; background: #e94d43; padding: 12px 17px; font-size: 11px; font-weight: 700; border-radius: 2px; }
+.ink-main { max-width: 1220px; margin: 0 auto; padding: 0 25px 80px; }
+.ink-intro { padding: 55px 0 45px; }
+.ink-eyebrow { color: #e94d43; text-transform: uppercase; letter-spacing: .16em; font-size: 10px; font-weight: 700; }
+.ink-intro h1 { font: 500 clamp(47px, 7vw, 86px)/.95 'Libre Baskerville', Georgia, serif; letter-spacing: -.075em; margin: 15px 0 18px; }
+.ink-intro p { color: #96938e; font-size: 14px; margin: 0; }
+.ink-featured { display: grid; grid-template-columns: 1fr 1.05fr; min-height: 435px; border: 1px solid #333; }
+.ink-featured-media { position: relative; overflow: hidden; }
+.ink-featured-media img, .ink-video-media img { display: block; width: 100%; height: 100%; object-fit: cover; transition: transform .45s ease; }
+.ink-featured:hover .ink-featured-media img, .ink-video-card:hover .ink-video-media img { transform: scale(1.04); }
+.ink-play { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); width: 54px; height: 54px; display: grid; place-items: center; padding-left: 3px; color: #f5f2ec; background: #e94d43; border-radius: 50%; font-size: 19px; }
+.ink-featured-copy { padding: 72px 45px; display: flex; flex-direction: column; align-items: flex-start; justify-content: center; }
+.ink-featured-copy h2 { font: 500 clamp(31px, 4vw, 51px)/1 'Libre Baskerville', Georgia, serif; letter-spacing: -.065em; margin: 15px 0 20px; }
+.ink-featured-copy p { color: #a09c95; max-width: 390px; font-size: 13px; line-height: 1.55; margin: 0 0 16px; }
+.ink-duration { color: #aaa69f; font-size: 10px; }
+.ink-watch { display: inline-block; color: #161616; background: #f5f2ec; padding: 10px 16px; margin-top: 18px; font-size: 10px; font-weight: 700; }
+.ink-all { border-top: 1px solid #777; margin-top: 60px; padding-top: 15px; }
+.ink-all h2 { font: 500 30px/1 'Libre Baskerville', Georgia, serif; margin: 0 0 13px; letter-spacing: -.055em; }
+.ink-all > p { color: #96938e; font-size: 12px; margin: 0 0 26px; }
+.ink-video-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 18px; }
+.ink-video-card { color: inherit; display: block; }
+.ink-video-media { height: 170px; overflow: hidden; position: relative; background: #252525; margin-bottom: 13px; }
+.ink-play.small { width: 36px; height: 36px; font-size: 12px; }
+.ink-video-card h3 { font: 500 17px/1.15 'Libre Baskerville', Georgia, serif; margin: 8px 0; letter-spacing: -.035em; }
+.ink-video-card time { color: #97938b; display: block; font-size: 10px; }
+.ink-footer { border-top: 1px solid #333; max-width: 1220px; margin: 0 auto; padding: 48px 25px 24px; }
+.ink-footer-top { display: grid; grid-template-columns: 1fr 1fr; gap: 60px; padding-bottom: 48px; }
+.ink-footer-top p { color: #97938b; font-size: 12px; line-height: 1.5; max-width: 300px; }
+.ink-footer-top form { align-self: end; }
+.ink-footer-top label { color: #f5f2ec; display: block; margin-bottom: 10px; font: 500 25px 'Libre Baskerville', serif; }
+.ink-footer-top form div { display: flex; border-bottom: 1px solid #777; }
+.ink-footer-top input { flex: 1; min-width: 0; padding: 12px 0; color: #f5f2ec; background: transparent; border: 0; outline: 0; font-size: 12px; }
+.ink-footer-top input::placeholder { color: #77736e; }
+.ink-footer-top button { color: #111; background: #f5f2ec; border: 0; padding: 11px 15px; font-size: 10px; font-weight: 700; }
+.ink-footer-links { display: grid; grid-template-columns: repeat(4, 1fr); gap: 25px; border-top: 1px solid #333; padding-top: 27px; }
+.ink-footer-links > div { display: flex; flex-direction: column; gap: 9px; }
+.ink-footer-links b { color: #f5f2ec; font-size: 10px; text-transform: uppercase; letter-spacing: .12em; margin-bottom: 5px; }
+.ink-footer-links a { color: #99958e; font-size: 11px; }
+.ink-footer-links a:hover { color: #f5f2ec; }
+.ink-social { display: flex; flex-direction: column; gap: 9px; }
+.ink-footer-bottom { display: flex; justify-content: space-between; gap: 20px; border-top: 1px solid #333; margin-top: 38px; padding-top: 18px; color: #76726c; font-size: 10px; }
+.ink-footer-bottom > span:last-child { display: flex; gap: 15px; }
+.ink-footer-bottom a { color: inherit; }
+
+@media (max-width: 900px) {
+  .ink-header { gap: 25px; }
+  .ink-header nav { gap: 13px; }
+  .ink-header nav a { font-size: 10px; }
+  .ink-featured-copy { padding: 40px 30px; }
+  .ink-video-grid { grid-template-columns: repeat(2, 1fr); }
+  .ink-video-media { height: 210px; }
+}
+@media (max-width: 680px) {
+  .listing-grid { grid-template-columns: 1fr 1fr; gap: 0 14px; }
+  .listing-grid .story-link::before { height: 140px; }
+  .article-copy { padding: 0 8px; }
+  .article-copy h1 { font-size: 48px; }
+  .ink-header { height: auto; padding: 21px 18px; flex-wrap: wrap; gap: 20px; }
+  .ink-header nav { order: 3; flex-basis: 100%; overflow-x: auto; scrollbar-width: none; gap: 21px; }
+  .ink-header nav::-webkit-scrollbar { display: none; }
+  .ink-actions { margin-left: auto; }
+  .ink-main { padding: 0 18px 60px; }
+  .ink-intro { padding: 48px 0 31px; }
+  .ink-intro h1 { font-size: 48px; }
+  .ink-featured { grid-template-columns: 1fr; }
+  .ink-featured-media { height: 270px; }
+  .ink-featured-copy { padding: 33px 22px 39px; }
+  .ink-featured-copy h2 { font-size: 33px; }
+  .ink-all { margin-top: 45px; }
+  .ink-video-grid { gap: 21px 13px; }
+  .ink-video-media { height: 120px; }
+  .ink-video-card h3 { font-size: 14px; }
+  .ink-footer { padding: 42px 18px 22px; }
+  .ink-footer-top { grid-template-columns: 1fr; gap: 35px; }
+  .ink-footer-links { grid-template-columns: repeat(2, 1fr); gap: 30px 18px; }
+  .ink-footer-bottom { display: block; line-height: 1.7; }
+  .ink-footer-bottom > span { display: block; margin-bottom: 7px; }
+  .ink-footer-bottom > span:last-child { flex-wrap: wrap; gap: 8px 13px; }
+}

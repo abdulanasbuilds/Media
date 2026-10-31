@@ -1,17 +1,20 @@
-# PRESSRA Mirror TODO
+# PRESSRA Multi-Page Mirror TODO
 
-## Faithful homepage reproduction
-- [x] Recreate the reference homepage in native code with no iframe, page embed, or source-site wrapper.
-- [x] Match the visible black utility header, centered PRESSRA masthead, category navigation, section labels, borders, typography, spacing, colors, and editorial hierarchy.
-- [x] Populate the homepage with the reference copy, article metadata, section order, editorial cards, trending list, newsletter block, social links, and footer.
-- [x] Use the reference imagery for the lead editorial cards and preserve native image loading rather than embedding the source page.
+## Existing PRESSRA homepage
+- [x] Preserve the original homepage visual composition and editorial content while extending the site structure.
+- [x] Keep the existing native implementation iframe-free and responsive.
 
-## Behavior and responsive layout
-- [x] Keep article, category, search, follow, newsletter, and footer links keyboard-friendly and visibly interactive.
-- [x] Recreate the search reveal interaction and article hover/focus states.
-- [x] Provide responsive desktop, tablet, and mobile layouts that preserve the reference composition.
-- [x] Serve a complete `/manus-routes.json` route manifest for the implemented homepage and article-like paths.
+## Multi-page structure
+- [x] Add route-aware homepage, latest, category, and article pages using the existing PRESSRA content system.
+- [x] Expand `/manus-routes.json` to cover homepage, listings, category pages, article pages, and video routes.
+- [x] Keep Pressra navigation links as real page routes instead of hash-only anchors.
 
-## Delivery
-- [x] Run diagnostics and production build checks.
-- [ ] Save the finished implementation to the managed project checkpoint.
+## Video page
+- [x] Add a native `/video` page based on https://inkvora.framer.website/video without using an iframe or page embed.
+- [x] Recreate the Inkvora-style dark header, featured video split layout, play controls, All Videos grid, newsletter, footer, and responsive behavior.
+- [x] Add video-detail-like paths under `/video/:slug` that preserve the video page experience.
+
+## Validation and delivery
+- [x] Run the production build successfully after the multi-page changes.
+- [x] Inspect desktop and mobile renders for both `/` and `/video`.
+- [ ] Push the updated multi-page implementation to the managed and GitHub remotes.

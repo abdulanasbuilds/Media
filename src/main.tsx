@@ -23,8 +23,21 @@ const image = {
   travel: 'https://framerusercontent.com/images/VaOo8A00g8VTEhGblwyjnLmK8pU.jpg?width=1600&height=1199',
 };
 
+const videoImage = {
+  featured: 'https://framerusercontent.com/images/9DELZ9KqtDxGUunTANoMCrxlufE.jpg?width=1400&height=965',
+  ideas: 'https://framerusercontent.com/images/l2ytpi6kgJqvVIDlnLPpCNJdM.jpg?width=1400&height=933',
+  founders: 'https://framerusercontent.com/images/yRnwDFGJUBGZZDCzwNxv3C8pX3s.jpg?width=1400&height=933',
+  city: 'https://framerusercontent.com/images/cADFdmW8lVdJIIGro3UZmtx1Zlw.jpg?width=1400&height=933',
+};
+
 const navItems = ['Home', 'Latest', 'World', 'Business', 'Technology', 'Culture', 'Lifestyle', 'Sports'];
 const categories = ['World', 'Business', 'Technology', 'Culture', 'Lifestyle', 'Sports', 'Travel'];
+
+function pressraPath(label: string) {
+  if (label === 'Home') return '/';
+  if (label === 'Latest') return '/latest';
+  return `/category/${label.toLowerCase()}`;
+}
 
 const stories: Record<string, Story[]> = {
   picks: [
@@ -145,7 +158,7 @@ function TopBar({ onSearch }: { onSearch: () => void }) {
       <div className="topbar">
         <a className="mini-wordmark" href="#top" aria-label="Pressra home">Pressra</a>
         <nav className="top-nav" aria-label="Primary">
-          {navItems.map((item) => <a key={item} href={item === 'Home' ? '#top' : `#${item.toLowerCase()}`}>{item}</a>)}
+          {navItems.map((item) => <a key={item} href={pressraPath(item)}>{item}</a>)}
         </nav>
         <div className="top-actions">
           <button className="icon-button" type="button" aria-label="Search PRESSRA" onClick={onSearch}><SearchIcon /></button>
@@ -170,7 +183,7 @@ function Masthead() {
       <div className="masthead-meta"><span>Thursday, October 22, 2026</span><span>Global Edition · Independent Journalism</span></div>
       <a className="wordmark" href="#top">Pressra</a>
       <nav className="category-nav" aria-label="Sections">
-        {categories.map((category) => <a key={category} href={`#${category.toLowerCase()}`}>{category}</a>)}
+        {categories.map((category) => <a key={category} href={`/category/${category.toLowerCase()}`}>{category}</a>)}
       </nav>
     </header>
   );
@@ -265,7 +278,69 @@ function Footer({ onSubscribe }: { onSubscribe: () => void }) {
   );
 }
 
+function ListingPage({ title, eyebrow, intro, items }: { title: string; eyebrow: string; intro: string; items: Story[] }) {
+  return (
+    <div className="page-shell">
+      <TopBar onSearch={() => {}} />
+      <Masthead />
+      <main className="listing-page">
+        <section className="listing-heading"><span className="section-kicker">{eyebrow}</span><h1>{title}</h1><p>{intro}</p></section>
+        <div className="listing-grid">{items.map((story) => <StoryLink key={story.title} story={{ ...story, href: story.href ?? `/article/${slugify(story.title)}` }} />)}</div>
+        <Footer onSubscribe={() => {}} />
+      </main>
+    </div>
+  );
+}
+
+function ArticlePage({ slug }: { slug: string }) {
+  const allStories = [...stories.picks, ...stories.latest, ...trendStories, ...lowerSections.flatMap((section) => section.items)];
+  const story = allStories.find((item) => slugify(item.title) === slug) ?? { category: 'World', title: 'The New World Taking Shape Around Us', dek: 'From shifting economies to emerging ideas, the forces shaping our lives are moving faster than ever. PRESSRA brings the context behind the headlines into focus.', author: 'Olivia Bennett', time: '8 min read', image: image.hero };
+  return (
+    <div className="page-shell">
+      <TopBar onSearch={() => {}} />
+      <Masthead />
+      <main className="article-page">
+        <article className="article-copy">
+          <span className="section-kicker">{story.category}</span>
+          <h1>{story.title}</h1>
+          {story.dek && <p className="article-dek">{story.dek}</p>}
+          <div className="big-story-meta"><span>{story.author ?? 'PRESSRA Editorial'}</span><span>{story.time ?? '6 min read'}</span></div>
+          <img className="article-image" src={story.image ?? image.hero} alt="" />
+          <p>Stories move quickly. Context takes more time. PRESSRA follows the ideas, people and decisions behind the headline, bringing a clear-eyed view of what is changing and why it matters.</p>
+          <p>Read the full perspective from our newsroom, with reporting that keeps the wider picture in focus.</p>
+        </article>
+      </main>
+    </div>
+  );
+}
+
+function InkvoraHeader() {
+  return (
+    <header className="ink-header">
+      <a className="ink-logo" href="/video">INKVORA</a>
+      <nav aria-label="Inkvora primary navigation"><a href="/video">Latest</a><a href="/video">Technology</a><a href="/video">Design</a><a href="/video">Business</a><a href="/video">Culture</a><a href="/video">Innovation</a><a href="/video">Magazine</a><a className="active" href="/video">Video</a></nav>
+      <div className="ink-actions"><button type="button" aria-label="Search">⌕</button><a href="#ink-subscribe">Subscribe</a></div>
+    </header>
+  );
+}
+
+const inkVideos = [
+  { duration: '4:12', title: 'Ideas in Motion', date: 'Oct 20, 2026', image: videoImage.ideas, slug: 'ideas-in-motion' },
+  { duration: '12:48', title: 'The Big Ideas, Clearly Told', date: 'Oct 14, 2026', image: videoImage.featured, slug: 'the-big-ideas-clearly-told' },
+  { duration: '9:30', title: 'Founders on Building Small', date: 'Oct 8, 2026', image: videoImage.founders, slug: 'founders-on-building-small' },
+  { duration: '7:05', title: 'The City as a Living Room', date: 'Oct 1, 2026', image: videoImage.city, slug: 'the-city-as-a-living-room' },
+];
+
+function InkvoraFooter() {
+  return <footer className="ink-footer" id="ink-subscribe"><div className="ink-footer-top"><div><a className="ink-logo" href="/video">INKVORA</a><p>Stories that shape tomorrow.</p><p>Thoughtful reporting and fresh perspectives on technology, design, business, and culture.</p></div><form onSubmit={(event) => event.preventDefault()}><label htmlFor="ink-email">Subscribe</label><div><input id="ink-email" type="email" placeholder="Your email address" /><button type="submit">Subscribe</button></div></form></div><div className="ink-footer-links"><div><b>Explore</b><a href="/video">Latest</a><a href="/video">Topics</a><a href="/video">Magazine</a><a href="/video">Video</a></div><div><b>Company</b><a href="/video">About</a><a href="/video">Contact</a><a href="/video">Advertise</a><a href="/video">Careers</a></div><div><b>Readers</b><a href="#ink-subscribe">Newsletter</a><a href="/video">Search</a><a href="/video">Contributors</a><a href="/video">Corrections</a></div><div><b>Follow INKVORA</b><div className="ink-social"><a href="https://x.com">X</a><a href="https://www.instagram.com">Instagram</a><a href="https://www.linkedin.com">LinkedIn</a><a href="https://www.youtube.com">YouTube</a></div></div></div><div className="ink-footer-bottom"><span>INKVORA</span><span>© 2026 INKVORA. All rights reserved.</span><span><a href="/video">Privacy Policy</a><a href="/video">Terms of Use</a><a href="/video">Editorial Standards</a></span></div></footer>;
+}
+
+function VideoPage() {
+  return <div className="ink-page"><InkvoraHeader /><main className="ink-main"><section className="ink-intro"><span className="ink-eyebrow">VIDEO</span><h1>Watch, Listen, Understand</h1><p>Visual stories, interviews, and concise explainers for curious minds.</p></section><a className="ink-featured" href="/video/the-big-ideas-clearly-told"><div className="ink-featured-media"><img src={videoImage.featured} alt="Interview in a gallery" /><span className="ink-play">▶</span></div><div className="ink-featured-copy"><span className="ink-eyebrow">FEATURED</span><h2>The Big Ideas, Clearly Told</h2><p>Watch conversations and short features that make complex subjects easier to explore, from intelligent tools to the future of cities.</p><span className="ink-duration">12:48 · Video feature</span><span className="ink-watch">Watch Now</span></div></a><section className="ink-all"><h2>All Videos</h2><p>Short films, conversations, and visual explainers that bring important stories closer.</p><div className="ink-video-grid">{inkVideos.map((video) => <a href={`/video/${video.slug}`} className="ink-video-card" key={video.title}><div className="ink-video-media"><img src={video.image} alt="" /><span className="ink-play small">▶</span></div><span className="ink-duration">{video.duration}</span><h3>{video.title}</h3><time>{video.date}</time></a>)}</div></section></main><InkvoraFooter /></div>;
+}
+
 function App() {
+  const path = window.location.pathname;
   const [searchOpen, setSearchOpen] = useState(false);
   const [search, setSearch] = useState('');
   const [subscribed, setSubscribed] = useState(false);
@@ -279,6 +354,15 @@ function App() {
     window.addEventListener('keydown', onKeyDown);
     return () => window.removeEventListener('keydown', onKeyDown);
   }, []);
+
+  if (path === '/video' || path.startsWith('/video/')) return <VideoPage />;
+  if (path.startsWith('/article/')) return <ArticlePage slug={path.split('/')[2] ?? ''} />;
+  if (path === '/latest') return <ListingPage title="The Latest" eyebrow="FRESHLY PUBLISHED" intro="New reporting, useful perspectives and fresh ideas from across the PRESSRA newsroom." items={stories.latest} />;
+  if (path.startsWith('/category/')) {
+    const category = (path.split('/')[2] ?? 'world').replace(/-/g, ' ');
+    const items = [...stories.picks, ...stories.latest, ...trendStories, ...lowerSections.flatMap((section) => section.items)].filter((story) => story.category.toLowerCase() === category.toLowerCase());
+    return <ListingPage title={`${category.charAt(0).toUpperCase()}${category.slice(1)} in Perspective`} eyebrow={category.toUpperCase()} intro={`Clear-eyed stories and perspectives from across the ${category} desk.`} items={items.length ? items : stories.latest} />;
+  }
 
   return (
     <div className="page-shell">
