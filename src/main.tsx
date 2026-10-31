@@ -285,7 +285,7 @@ function ListingPage({ title, eyebrow, intro, items }: { title: string; eyebrow:
       <Masthead />
       <main className="listing-page">
         <section className="listing-heading"><span className="section-kicker">{eyebrow}</span><h1>{title}</h1><p>{intro}</p></section>
-        <div className="listing-grid">{items.map((story) => <StoryLink key={story.title} story={{ ...story, href: story.href ?? `/article/${slugify(story.title)}` }} />)}</div>
+        <div className="listing-grid">{items.map((story, index) => <StoryLink key={`${story.category}-${slugify(story.title)}-${index}`} story={{ ...story, href: story.href ?? `/article/${slugify(story.title)}` }} />)}</div>
         <Footer onSubscribe={() => {}} />
       </main>
     </div>
