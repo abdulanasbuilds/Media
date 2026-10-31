@@ -30,12 +30,13 @@ const videoImage = {
   city: 'https://framerusercontent.com/images/cADFdmW8lVdJIIGro3UZmtx1Zlw.jpg?width=1400&height=933',
 };
 
-const navItems = ['Home', 'Latest', 'World', 'Business', 'Technology', 'Culture', 'Lifestyle', 'Sports'];
+const navItems = ['Home', 'Latest', 'World', 'Business', 'Technology', 'Culture', 'Lifestyle', 'Sports', 'Video'];
 const categories = ['World', 'Business', 'Technology', 'Culture', 'Lifestyle', 'Sports', 'Travel'];
 
 function pressraPath(label: string) {
   if (label === 'Home') return '/';
   if (label === 'Latest') return '/latest';
+  if (label === 'Video') return '/video';
   return `/category/${label.toLowerCase()}`;
 }
 
