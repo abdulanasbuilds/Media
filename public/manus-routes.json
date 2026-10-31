@@ -1,0 +1,9 @@
+{
+  "routes": [
+    { "path": "/", "title": "PRESSRA Home" },
+    { "path": "/latest", "title": "PRESSRA Latest" },
+    { "path": "/category/:slug", "title": "PRESSRA Category" },
+    { "path": "/article/:slug", "title": "PRESSRA Story" },
+    { "path": "/search", "title": "PRESSRA Search" }
+  ]
+}
