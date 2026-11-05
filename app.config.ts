@@ -1,3 +1,3 @@
 export default {
-  logoUrl: "https://files.manuscdn.com/user_upload_by_module/session_file/310519663655370907/IjRGGhwVbGQAFFJa.svg"
+  logoUrl: "https://framerusercontent.com/images/La0Wtl6atkAHwjmi69M1CMOi3c.png"
 };
