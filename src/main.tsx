@@ -1,392 +1,97 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import './styles.css';
 
-type Story = {
-  category: string;
-  title: string;
-  dek?: string;
-  author?: string;
-  time?: string;
-  href?: string;
-  image?: string;
-};
+type IconName = 'arrow' | 'check' | 'alert' | 'play' | 'spark';
 
-const image = {
-  hero: 'https://framerusercontent.com/images/FjcrzfIbeDzTkVE8Y63xnxZJ27c.jpg?width=1600&height=1067',
-  world: 'https://framerusercontent.com/images/SsC2y9e8XKqkjXPrCw2IhN1msk.jpg?width=1600&height=1067',
-  business: 'https://framerusercontent.com/images/HrzhdK951MdOyDYIuPkAA3FXQ.jpg?width=1600&height=1067',
-  culture: 'https://framerusercontent.com/images/LsxfwkLQI2zL3JoIdmTCWDWXkws.jpg?width=1600&height=1067',
-  technology: 'https://framerusercontent.com/images/TKGFuCy5HULhjiXl1pJoAes0SM.jpg?width=1600&height=1067',
-  lifestyle: 'https://framerusercontent.com/images/VyfMTE72ySlgUsZlhWpHBmPH0.jpg?width=1600&height=1067',
-  sports: 'https://framerusercontent.com/images/VWcXX2jIWHfre7wA0VpgeGbsh3I.jpg?width=1600&height=900',
-  travel: 'https://framerusercontent.com/images/VaOo8A00g8VTEhGblwyjnLmK8pU.jpg?width=1600&height=1199',
-};
-
-const videoImage = {
-  featured: 'https://framerusercontent.com/images/9DELZ9KqtDxGUunTANoMCrxlufE.jpg?width=1400&height=965',
-  ideas: 'https://framerusercontent.com/images/l2ytpi6kgJqvVIDlnLPpCNJdM.jpg?width=1400&height=933',
-  founders: 'https://framerusercontent.com/images/yRnwDFGJUBGZZDCzwNxv3C8pX3s.jpg?width=1400&height=933',
-  city: 'https://framerusercontent.com/images/cADFdmW8lVdJIIGro3UZmtx1Zlw.jpg?width=1400&height=933',
-};
-
-const navItems = ['Home', 'Latest', 'World', 'Business', 'Technology', 'Culture', 'Lifestyle', 'Sports', 'Video'];
-const categories = ['World', 'Business', 'Technology', 'Culture', 'Lifestyle', 'Sports', 'Travel'];
-
-function pressraPath(label: string) {
-  if (label === 'Home') return '/';
-  if (label === 'Latest') return '/latest';
-  if (label === 'Video') return '/video';
-  return `/category/${label.toLowerCase()}`;
+function Icon({ name }: { name: IconName }) {
+  if (name === 'arrow') return <span aria-hidden="true">↗</span>;
+  if (name === 'check') return <span aria-hidden="true">✓</span>;
+  if (name === 'alert') return <span aria-hidden="true">!</span>;
+  if (name === 'play') return <span aria-hidden="true">▶</span>;
+  return <span aria-hidden="true">✦</span>;
 }
 
-const stories: Record<string, Story[]> = {
-  picks: [
-    { category: 'Business', title: 'The Next Chapter of the Global Economy', dek: 'The signals, challenges and emerging opportunities shaping the way businesses plan for what comes next.', author: 'Marcus Hale', time: '6 min read', image: image.business, href: '/article/the-next-chapter-of-the-global-economy' },
-    { category: 'Culture', title: 'Inside the Creative Minds Redefining Modern Design', dek: 'Meet the studios and makers turning restraint, craft and curiosity into a new design language.', author: 'Elena Moreau', time: '5 min read', image: image.culture, href: '/article/inside-the-creative-minds-redefining-modern-design' },
-    { category: 'Technology', title: 'The Technology Quietly Changing Everyday Life', dek: 'The most important innovations are often the least visible — here’s where they are already at work.', author: 'Priya Raman', time: '7 min read', image: image.technology, href: '/article/the-technology-quietly-changing-everyday-life' },
-    { category: 'Lifestyle', title: 'Why Our Cities Are Rethinking the Way We Live', dek: 'Planners, residents and architects are reimagining streets, homes and public space for a calmer urban life.', author: 'Elena Moreau', time: '4 min read', image: image.lifestyle, href: '/article/why-our-cities-are-rethinking-the-way-we-live' },
-  ],
-  latest: [
-    { category: 'Business', title: 'Why the Future of Work Is Becoming More Flexible', dek: 'Hybrid schedules, distributed teams and new expectations are changing the shape of the working week.', author: 'Marcus Hale', time: '5 min read', href: '/article/why-the-future-of-work-is-becoming-more-flexible' },
-    { category: 'Culture', title: 'A New Generation Is Redefining Personal Style', dek: 'Vintage finds, local labels and personal expression are replacing trends with something more lasting.', author: 'Elena Moreau', time: '4 min read', href: '/article/a-new-generation-is-redefining-personal-style' },
-    { category: 'Technology', title: 'The Practical Guide to Making Technology Work for You', dek: 'Simple settings, smarter tools and better habits that put your devices back in service of your day.', author: 'Priya Raman', time: '8 min read', href: '/article/the-practical-guide-to-making-technology-work-for-you' },
-    { category: 'Lifestyle', title: 'Small Changes That Can Make a City Feel More Human', dek: 'Benches, trees and shared spaces: the modest interventions with an outsized effect on daily life.', author: 'Elena Moreau', time: '6 min read', href: '/article/small-changes-that-can-make-a-city-feel-more-human' },
-    { category: 'Sports', title: 'The Stories Behind This Week’s Biggest Sporting Moments', dek: 'The decisions, celebrations and quiet turning points behind the results everyone is discussing.', author: 'Daniel Okafor', time: '5 min read', href: '/article/the-stories-behind-this-week’s-biggest-sporting-moments' },
-    { category: 'Travel', title: 'What to Know Before Your Next Big Trip', dek: 'From documents to timing to local etiquette — a calm checklist for travelling well.', author: 'Sofia Lindqvist', time: '7 min read', href: '/article/what-to-know-before-your-next-big-trip' },
-  ],
-};
-
-const trendStories: Story[] = [
-  { category: 'World', title: 'The Big Questions Facing the World This Year', href: '/article/the-big-questions-facing-the-world-this-year' },
-  { category: 'Business', title: 'What the Latest Market Shifts Mean for Everyday Life', href: '/article/what-the-latest-market-shifts-mean-for-everyday-life' },
-  { category: 'Culture', title: 'The Creators Changing the Future of Entertainment', href: '/article/the-creators-changing-the-future-of-entertainment' },
-  { category: 'Technology', title: 'A Smarter Way to Think About Digital Wellbeing', href: '/article/a-smarter-way-to-think-about-digital-wellbeing' },
-  { category: 'Travel', title: 'The New Travel Habits Changing How We Explore', href: '/article/the-new-travel-habits-changing-how-we-explore' },
+const nav = [
+  ['The situation', '#situation'],
+  ['The solution', '#solution'],
+  ['How it works', '#workflow'],
+  ['Investment', '#investment'],
 ];
 
-const lowerSections = [
-  {
-    eyebrow: 'BEYOND THE HEADLINES', title: 'A Wider View of the World', intro: 'Understand the events, decisions and people influencing communities across the globe.', cta: 'EXPLORE WORLD NEWS',
-    items: [
-      { category: 'World', title: 'The Ideas, People and Decisions Defining Tomorrow', dek: 'A closer look at the developments making an impact far beyond today’s news cycle.', author: 'Olivia Bennett', time: '6 min read' },
-      { category: 'World', title: 'The Big Questions Facing the World This Year', author: 'Olivia Bennett', time: '6 min read' },
-      { category: 'World', title: 'The Global Shifts Changing the Conversation', author: 'Olivia Bennett', time: '7 min read' },
-      { category: 'World', title: 'A Region in Focus: The People Behind the Headlines', author: 'Olivia Bennett', time: '6 min read' },
-      { category: 'World', title: 'What Today’s Developments Could Mean Tomorrow', author: 'Olivia Bennett', time: '5 min read' },
-    ] as Story[],
-  },
-  {
-    eyebrow: 'MONEY, MARKETS & IDEAS', title: 'Business in Perspective', intro: 'Clear-eyed reporting on markets, leadership, work and the ideas driving change.', cta: 'MORE BUSINESS STORIES',
-    items: [
-      { category: 'Business', title: 'Why the Future of Work Is Becoming More Flexible', dek: 'Hybrid schedules, distributed teams and new expectations are changing the shape of the working week.', author: 'Marcus Hale', time: '5 min read' },
-      { category: 'Business', title: 'The Next Chapter of the Global Economy', dek: 'The signals, challenges and emerging opportunities shaping the way businesses plan for what comes next.', author: 'Marcus Hale', time: '6 min read' },
-      { category: 'Business', title: 'What the Latest Market Shifts Mean for Everyday Life', dek: 'Interest rates, prices and paychecks: translating market movements into what changes at home.', author: 'Marcus Hale', time: '5 min read' },
-    ] as Story[],
-  },
-  {
-    eyebrow: 'WHAT’S NEXT', title: 'Technology, Explained', intro: 'Explore the products, breakthroughs and digital shifts changing the way we live and work.', cta: 'EXPLORE TECHNOLOGY',
-    items: [
-      { category: 'Technology', title: 'The Practical Guide to Making Technology Work for You', dek: 'Simple settings, smarter tools and better habits that put your devices back in service of your day.', author: 'Priya Raman', time: '8 min read' },
-      { category: 'Technology', title: 'The Technology Quietly Changing Everyday Life', dek: 'The most important innovations are often the least visible — here’s where they are already at work.', author: 'Priya Raman', time: '7 min read' },
-      { category: 'Technology', title: 'A Smarter Way to Think About Digital Wellbeing', dek: 'Less screen guilt, more intention: a practical framework for healthier relationships with technology.', author: 'Priya Raman', time: '4 min read' },
-    ] as Story[],
-  },
-  {
-    eyebrow: 'PEOPLE, PLACES & PERSPECTIVES', title: 'The Things That Shape Us', intro: 'Thoughtful stories about creativity, identity, design, travel and modern life.', cta: 'DISCOVER CULTURE',
-    items: [
-      { category: 'Lifestyle', title: 'Small Changes That Can Make a City Feel More Human', author: 'Elena Moreau', time: '6 min read' },
-      { category: 'Lifestyle', title: 'Why Our Cities Are Rethinking the Way We Live', author: 'Elena Moreau', time: '4 min read' },
-      { category: 'Lifestyle', title: 'The Places Inspiring a New Kind of Travel', author: 'Sofia Lindqvist', time: '7 min read' },
-      { category: 'Lifestyle', title: 'How Everyday Rituals Help Us Find More Balance', author: 'Elena Moreau', time: '4 min read' },
-      { category: 'Culture', title: 'A New Generation Is Redefining Personal Style', dek: 'Vintage finds, local labels and personal expression are replacing trends with something more lasting.', author: 'Elena Moreau', time: '4 min read' },
-    ] as Story[],
-  },
-  {
-    eyebrow: 'THE GAME, AND BEYOND', title: 'Sport in Motion', intro: 'The people, performances and turning points behind the scores.', cta: 'MORE SPORTS NEWS',
-    items: [
-      { category: 'Sports', title: 'The Stories Behind This Week’s Biggest Sporting Moments', dek: 'The decisions, celebrations and quiet turning points behind the results everyone is discussing.', author: 'Daniel Okafor', time: '5 min read' },
-      { category: 'Sports', title: 'The Moment That Changed the Match', dek: 'One decision, one pass, one second — revisiting the turning point everyone is still talking about.', author: 'Daniel Okafor', time: '4 min read' },
-      { category: 'Sports', title: 'Inside the Preparation Behind Elite Performance', dek: 'Sleep, data and discipline: how top athletes prepare long before the whistle.', author: 'Daniel Okafor', time: '6 min read' },
-    ] as Story[],
-  },
+const deliverables = [
+  { number: '01', title: 'A dependable public home', text: 'A fast, mobile-first Lawson website with News, Latest, Politics, Business, Sports, Entertainment, Education, Health, Video, Live TV and Live Radio.' },
+  { number: '02', title: 'One newsroom dashboard', text: 'Editors create and manage articles, video, audio, galleries, live streams, authors, categories, homepage placement and schedules from one place.' },
+  { number: '03', title: 'Lawson TV + 96.3 FM connected', text: 'Make broadcasts discoverable on the website with live players, programme pages, recent clips, show archives and clear calls to watch or listen.' },
+  { number: '04', title: 'Distribution without repetition', text: 'Prepare one story for the website, YouTube, social channels, newsletter and notifications, with approval status for every destination.' },
 ];
 
-const favorites = [
-  ['01', 'Making Sense of a Fast-Moving Economic Landscape', 'Business'],
-  ['02', 'Five Big Ideas Changing the Way We Think', 'Culture'],
-  ['03', 'The Essential Guide to a More Intentional Digital Life', 'Technology'],
-  ['04', 'What Business Leaders Are Watching Right Now', 'Business'],
-  ['05', 'The Destinations Finding Their Way onto Everyone’s List', 'Travel'],
+const phases = [
+  { label: '01', title: 'Recover & protect', duration: '1–2 weeks', text: 'Secure the domains, DNS, SSL, hosting, accounts and backups. Restore a branded holding page while the full site is being prepared.', items: ['Domain and DNS recovery', 'Security and access review', 'Content and URL inventory', 'Temporary branded landing page'] },
+  { label: '02', title: 'Build & migrate', duration: '4–8 weeks', text: 'Create the new Lawson web experience, migrate priority content, preserve valuable URLs and train the editorial team.', items: ['Responsive public website', 'Article, category and media templates', 'Redirect and SEO plan', 'Team training and staging review'] },
+  { label: '03', title: 'Connect & grow', duration: '4–8 weeks', text: 'Add the central newsroom workflow, video/audio connections, distribution queues, analytics and commercial inventory.', items: ['Editorial roles and approvals', 'YouTube/newsletter workflow', 'Live TV and radio surfaces', 'Analytics and advertising foundation'] },
 ];
 
-function slugify(value: string) {
-  return value.toLowerCase().replace(/[^a-z0-9]+/g, '-');
-}
-
-function Arrow() {
-  return <span className="arrow" aria-hidden="true">↗</span>;
-}
-
-function SearchIcon() {
-  return <svg aria-hidden="true" viewBox="0 0 24 24" className="search-icon"><circle cx="10.8" cy="10.8" r="6.8" /><path d="m16 16 5 5" /></svg>;
-}
-
-function StoryLink({ story, className = '' }: { story: Story; className?: string }) {
-  return (
-    <a className={`story-link ${className}`} href={story.href ?? '#'}>
-      <span className="story-category">{story.category}</span>
-      <h3>{story.title}</h3>
-      {story.dek && <p>{story.dek}</p>}
-      {(story.author || story.time) && <span className="meta">{story.author}{story.author && story.time ? ' · ' : ''}{story.time}</span>}
-    </a>
-  );
-}
-
-function TopBar({ onSearch }: { onSearch: () => void }) {
-  const ticker = [
-    'The New World Taking Shape Around Us',
-    'The Ideas, People and Decisions Defining Tomorrow',
-    'Why the Future of Work Is Becoming More Flexible',
-    'A New Generation Is Redefining Personal Style',
-    'The Practical Guide to Making Technology Work for You',
-    'Small Changes That Can Make a City Feel More Human',
-    'The Stories Behind This Week’s Biggest Sporting Moments',
-    'What to Know Before Your Next Big Trip',
-  ];
-  return (
-    <>
-      <div className="topbar">
-        <a className="mini-wordmark" href="#top" aria-label="Pressra home">Pressra</a>
-        <nav className="top-nav" aria-label="Primary">
-          {navItems.map((item) => <a key={item} href={pressraPath(item)}>{item}</a>)}
-        </nav>
-        <div className="top-actions">
-          <button className="icon-button" type="button" aria-label="Search PRESSRA" onClick={onSearch}><SearchIcon /></button>
-          <a className="follow-button" href="#follow">FOLLOW US</a>
-        </div>
-      </div>
-      <div className="ticker" aria-label="Just in">
-        <span className="ticker-label"><i /> JUST IN</span>
-        <div className="ticker-window">
-          <div className="ticker-track">
-            {[...ticker, ...ticker].map((title, index) => <a key={`${title}-${index}`} href="#latest">{title}</a>)}
-          </div>
-        </div>
-      </div>
-    </>
-  );
-}
-
-function Masthead() {
-  return (
-    <header className="masthead" id="top">
-      <div className="masthead-meta"><span>Thursday, October 22, 2026</span><span>Global Edition · Independent Journalism</span></div>
-      <a className="wordmark" href="#top">Pressra</a>
-      <nav className="category-nav" aria-label="Sections">
-        {categories.map((category) => <a key={category} href={`/category/${category.toLowerCase()}`}>{category}</a>)}
-      </nav>
-    </header>
-  );
-}
-
-function LeadGrid() {
-  const leadSide: Story[] = [
-    { category: 'World', title: 'The Ideas, People and Decisions Defining Tomorrow', dek: 'A closer look at the developments making an impact far beyond today’s news cycle.', author: 'Olivia Bennett', time: '6 min read', image: image.world, href: '/article/the-ideas-people-and-decisions-defining-tomorrow' },
-    { category: 'Business', title: 'The Next Chapter of the Global Economy', author: 'Marcus Hale', time: '6 min read', href: '/article/the-next-chapter-of-the-global-economy' },
-    { category: 'Culture', title: 'Inside the Creative Minds Redefining Modern Design', author: 'Elena Moreau', time: '5 min read', href: '/article/inside-the-creative-minds-redefining-modern-design' },
-    { category: 'Technology', title: 'The Technology Quietly Changing Everyday Life', author: 'Priya Raman', time: '7 min read', href: '/article/the-technology-quietly-changing-everyday-life' },
-  ];
-  return (
-    <section className="lead-grid" aria-label="Featured stories">
-      <div className="side-stories">
-        {leadSide.map((story, index) => <StoryLink key={story.title} story={story} className={index === 0 ? 'lead-side-first' : ''} />)}
-      </div>
-      <article className="big-story">
-        <a className="hero-image-wrap" href="/article/the-new-world-taking-shape-around-us" aria-label="Read The New World Taking Shape Around Us">
-          <img src={image.hero} alt="A city skyline at night" />
-        </a>
-        <p className="image-caption">A changing landscape reflects a world in transition.</p>
-        <span className="section-kicker"><i /> THE BIG STORY</span>
-        <a href="/article/the-new-world-taking-shape-around-us" className="big-story-title">The New World<br className="desktop-break" /> Taking Shape Around Us</a>
-        <p className="big-story-dek">From shifting economies to emerging ideas, the forces shaping our lives are moving faster than ever. PRESSRA brings the context behind the headlines into focus.</p>
-        <div className="big-story-meta"><span>Olivia Bennett</span><span>8 min read</span><span>World</span></div>
-        <a className="underlined-link" href="/article/the-new-world-taking-shape-around-us">READ THE FULL STORY <Arrow /></a>
-      </article>
-      <aside className="trending">
-        <div className="section-kicker">WHAT’S GETTING ATTENTION</div>
-        <h2>Trending Now</h2>
-        <p className="section-intro">The conversations readers are following right now.</p>
-        <div className="trend-list">
-          {trendStories.map((story, index) => (
-            <a href={story.href} className="trend-item" key={story.title}>
-              <span className="trend-number">{index + 1}</span>
-              <span><strong>{story.title}</strong><em>{story.category}</em></span>
-            </a>
-          ))}
-        </div>
-      </aside>
-    </section>
-  );
-}
-
-function EditorialSection({ section, id }: { section: typeof lowerSections[number]; id: string }) {
-  return (
-    <section className="editorial-section" id={id}>
-      <div className="section-heading">
-        <div>
-          <span className="section-kicker">{section.eyebrow}</span>
-          <h2>{section.title}</h2>
-          <p>{section.intro}</p>
-        </div>
-      </div>
-      <div className="editorial-list">
-        {section.items.map((story, index) => (
-          <StoryLink key={`${section.title}-${story.title}`} story={{ ...story, href: `/article/${story.title.toLowerCase().replace(/[^a-z0-9]+/g, '-')}` }} className={index === 0 ? 'editorial-feature' : ''} />
-        ))}
-      </div>
-      <a className="section-cta" href={`#${id}`}>{section.cta} <Arrow /></a>
-    </section>
-  );
-}
-
-function Footer({ onSubscribe }: { onSubscribe: () => void }) {
-  return (
-    <>
-      <section className="favorites-section">
-        <div className="section-kicker">READER FAVORITES</div>
-        <h2>Most Read This Week</h2>
-        <div className="favorites-list">
-          {favorites.map(([number, title, category]) => <a className="favorite" href="#latest" key={number}><span>{number}</span><strong>{title}</strong><em>{category}</em></a>)}
-        </div>
-      </section>
-      <section className="briefing" id="briefing">
-        <div><span className="section-kicker">THE PRESSRA BRIEFING</span><h2>The Stories That Matter, Delivered.</h2></div>
-        <div><p>Get our editors’ essential reads, sharp perspectives and the week’s most important developments in one thoughtful email.</p><button type="button" className="solid-button" onClick={onSubscribe}>SIGN ME UP <Arrow /></button><small>By subscribing, you agree to receive editorial updates from PRESSRA. You can unsubscribe at any time.</small></div>
-      </section>
-      <footer className="site-footer" id="follow">
-        <div className="footer-social"><span className="section-kicker">STAY IN THE CONVERSATION</span><h2>Follow PRESSRA for new stories, newsroom highlights and perspectives worth sharing.</h2><div className="social-links"><a href="#follow">INSTAGRAM</a><a href="#follow">X</a><a href="#follow">LINKEDIN</a><a href="#follow">YOUTUBE</a></div></div>
-        <div className="footer-grid">
-          <div className="footer-brand"><a className="footer-wordmark" href="#top">Pressra</a><p>Independent perspective. Stories with substance.</p><p>PRESSRA brings context, curiosity and clarity to the stories shaping our world.</p></div>
-          <div><span className="footer-label">SECTIONS</span>{categories.map((category) => <a href={`#${category.toLowerCase()}`} key={category}>{category}</a>)}</div>
-          <div><span className="footer-label">EXPLORE</span>{['Home', 'Latest Stories', 'Authors', 'Search'].map((item) => <a href="#top" key={item}>{item}</a>)}</div>
-          <div><span className="footer-label">PRESSRA</span>{['About PRESSRA', 'Contact', 'Editorial Tips'].map((item) => <a href="#follow" key={item}>{item}</a>)}</div>
-          <div><span className="footer-label">LEGAL</span>{['Privacy Policy', 'Terms of Use'].map((item) => <a href="#follow" key={item}>{item}</a>)}</div>
-        </div>
-        <div className="footer-bottom"><span>© 2026 PRESSRA. All rights reserved.</span><span><a href="#follow">Privacy Policy</a><a href="#follow">Terms of Use</a><a href="#follow">Contact</a></span></div>
-      </footer>
-    </>
-  );
-}
-
-function ListingPage({ title, eyebrow, intro, items }: { title: string; eyebrow: string; intro: string; items: Story[] }) {
-  return (
-    <div className="page-shell">
-      <TopBar onSearch={() => {}} />
-      <Masthead />
-      <main className="listing-page">
-        <section className="listing-heading"><span className="section-kicker">{eyebrow}</span><h1>{title}</h1><p>{intro}</p></section>
-        <div className="listing-grid">{items.map((story, index) => <StoryLink key={`${story.category}-${slugify(story.title)}-${index}`} story={{ ...story, href: story.href ?? `/article/${slugify(story.title)}` }} />)}</div>
-        <Footer onSubscribe={() => {}} />
-      </main>
-    </div>
-  );
-}
-
-function ArticlePage({ slug }: { slug: string }) {
-  const allStories = [...stories.picks, ...stories.latest, ...trendStories, ...lowerSections.flatMap((section) => section.items)];
-  const story = allStories.find((item) => slugify(item.title) === slug) ?? { category: 'World', title: 'The New World Taking Shape Around Us', dek: 'From shifting economies to emerging ideas, the forces shaping our lives are moving faster than ever. PRESSRA brings the context behind the headlines into focus.', author: 'Olivia Bennett', time: '8 min read', image: image.hero };
-  return (
-    <div className="page-shell">
-      <TopBar onSearch={() => {}} />
-      <Masthead />
-      <main className="article-page">
-        <article className="article-copy">
-          <span className="section-kicker">{story.category}</span>
-          <h1>{story.title}</h1>
-          {story.dek && <p className="article-dek">{story.dek}</p>}
-          <div className="big-story-meta"><span>{story.author ?? 'PRESSRA Editorial'}</span><span>{story.time ?? '6 min read'}</span></div>
-          <img className="article-image" src={story.image ?? image.hero} alt="" />
-          <p>Stories move quickly. Context takes more time. PRESSRA follows the ideas, people and decisions behind the headline, bringing a clear-eyed view of what is changing and why it matters.</p>
-          <p>Read the full perspective from our newsroom, with reporting that keeps the wider picture in focus.</p>
-        </article>
-      </main>
-    </div>
-  );
-}
-
-function InkvoraHeader() {
-  return (
-    <header className="ink-header">
-      <a className="ink-logo" href="/video">INKVORA</a>
-      <nav aria-label="Inkvora primary navigation"><a href="/video">Latest</a><a href="/video">Technology</a><a href="/video">Design</a><a href="/video">Business</a><a href="/video">Culture</a><a href="/video">Innovation</a><a href="/video">Magazine</a><a className="active" href="/video">Video</a></nav>
-      <div className="ink-actions"><button type="button" aria-label="Search">⌕</button><a href="#ink-subscribe">Subscribe</a></div>
-    </header>
-  );
-}
-
-const inkVideos = [
-  { duration: '4:12', title: 'Ideas in Motion', date: 'Oct 20, 2026', image: videoImage.ideas, slug: 'ideas-in-motion' },
-  { duration: '12:48', title: 'The Big Ideas, Clearly Told', date: 'Oct 14, 2026', image: videoImage.featured, slug: 'the-big-ideas-clearly-told' },
-  { duration: '9:30', title: 'Founders on Building Small', date: 'Oct 8, 2026', image: videoImage.founders, slug: 'founders-on-building-small' },
-  { duration: '7:05', title: 'The City as a Living Room', date: 'Oct 1, 2026', image: videoImage.city, slug: 'the-city-as-a-living-room' },
+const packages = [
+  { tag: 'START HERE', title: 'Recovery + audit', price: 'GHS 8,000–20,000', text: 'For making the digital foundation safe and reachable again.', items: ['Domain and DNS recovery support', 'Hosting, SSL and account audit', 'Backup and content assessment', 'URL inventory and rebuild plan', 'Temporary branded holding page'] },
+  { tag: 'PUBLIC WEBSITE', title: 'Website rebuild', price: 'GHS 45,000–90,000', text: 'For a professional Lawson public website with the essential media surfaces.', items: ['Homepage and news sections', 'Article, video and author pages', 'Live radio and Lawson TV integration', 'Search, newsletter and analytics', 'Priority content migration and redirects'] },
+  { tag: 'RECOMMENDED', title: 'Unified newsroom', price: 'GHS 90,000–180,000', text: 'For one publishing system shared by Lawson Media, TV and radio teams.', items: ['Custom newsroom dashboard', 'Roles, review and scheduling', 'Article, video, audio and gallery types', 'Homepage planning and media library', 'Controlled multi-channel publishing'] },
+  { tag: 'FULL ECOSYSTEM', title: 'Multi-brand platform', price: 'GHS 140,000–250,000+', text: 'For a connected digital operation across multiple Lawson brands and channels.', items: ['Multiple brands and domains', 'Advanced live media workflows', 'Apps, notifications and campaigns', 'Advertising and sponsorship tools', 'Continuous product development'] },
 ];
 
-function InkvoraFooter() {
-  return <footer className="ink-footer" id="ink-subscribe"><div className="ink-footer-top"><div><a className="ink-logo" href="/video">INKVORA</a><p>Stories that shape tomorrow.</p><p>Thoughtful reporting and fresh perspectives on technology, design, business, and culture.</p></div><form onSubmit={(event) => event.preventDefault()}><label htmlFor="ink-email">Subscribe</label><div><input id="ink-email" type="email" placeholder="Your email address" /><button type="submit">Subscribe</button></div></form></div><div className="ink-footer-links"><div><b>Explore</b><a href="/video">Latest</a><a href="/video">Topics</a><a href="/video">Magazine</a><a href="/video">Video</a></div><div><b>Company</b><a href="/video">About</a><a href="/video">Contact</a><a href="/video">Advertise</a><a href="/video">Careers</a></div><div><b>Readers</b><a href="#ink-subscribe">Newsletter</a><a href="/video">Search</a><a href="/video">Contributors</a><a href="/video">Corrections</a></div><div><b>Follow INKVORA</b><div className="ink-social"><a href="https://x.com">X</a><a href="https://www.instagram.com">Instagram</a><a href="https://www.linkedin.com">LinkedIn</a><a href="https://www.youtube.com">YouTube</a></div></div></div><div className="ink-footer-bottom"><span>INKVORA</span><span>© 2026 INKVORA. All rights reserved.</span><span><a href="/video">Privacy Policy</a><a href="/video">Terms of Use</a><a href="/video">Editorial Standards</a></span></div></footer>;
+const support = [
+  { title: 'Care', price: 'GHS 3,000–6,000 / month', text: 'Updates, backups, security checks, monitoring, small fixes and technical support.' },
+  { title: 'Managed newsroom', price: 'GHS 7,000–15,000 / month', text: 'Care plus analytics, SEO review, publishing workflow support, video support and monthly improvements.' },
+  { title: 'Growth partner', price: 'GHS 18,000+ / month', text: 'Priority response, multiple brands, integrations, campaign pages, advertising support and continuous development.' },
+];
+
+function Header() {
+  const [menuOpen, setMenuOpen] = useState(false);
+  return <header className="site-header"><a className="brand" href="#top"><span className="brand-mark">L</span><span>LAWSON<br /><small>MEDIA GROUP</small></span></a><nav>{nav.map(([label, href]) => <a href={href} key={href}>{label}</a>)}</nav><a className="header-cta" href="#contact">Start the conversation <Icon name="arrow" /></a><button className="menu-button" aria-label={menuOpen ? 'Close navigation' : 'Open navigation'} aria-expanded={menuOpen} onClick={() => setMenuOpen(!menuOpen)}>☰</button>{menuOpen && <nav className="mobile-nav" aria-label="Mobile navigation">{nav.map(([label, href]) => <a href={href} key={href} onClick={() => setMenuOpen(false)}>{label}</a>)}<a href="#contact" onClick={() => setMenuOpen(false)}>Start the conversation <Icon name="arrow" /></a></nav>}</header>;
 }
 
-function VideoPage() {
-  return <div className="ink-page"><InkvoraHeader /><main className="ink-main"><section className="ink-intro"><span className="ink-eyebrow">VIDEO</span><h1>Watch, Listen, Understand</h1><p>Visual stories, interviews, and concise explainers for curious minds.</p></section><a className="ink-featured" href="/video/the-big-ideas-clearly-told"><div className="ink-featured-media"><img src={videoImage.featured} alt="Interview in a gallery" /><span className="ink-play">▶</span></div><div className="ink-featured-copy"><span className="ink-eyebrow">FEATURED</span><h2>The Big Ideas, Clearly Told</h2><p>Watch conversations and short features that make complex subjects easier to explore, from intelligent tools to the future of cities.</p><span className="ink-duration">12:48 · Video feature</span><span className="ink-watch">Watch Now</span></div></a><section className="ink-all"><h2>All Videos</h2><p>Short films, conversations, and visual explainers that bring important stories closer.</p><div className="ink-video-grid">{inkVideos.map((video) => <a href={`/video/${video.slug}`} className="ink-video-card" key={video.title}><div className="ink-video-media"><img src={video.image} alt="" /><span className="ink-play small">▶</span></div><span className="ink-duration">{video.duration}</span><h3>{video.title}</h3><time>{video.date}</time></a>)}</div></section></main><InkvoraFooter /></div>;
+function SectionLabel({ children, tone = 'red' }: { children: React.ReactNode; tone?: 'red' | 'green' | 'amber' }) { return <span className={`section-label ${tone}`}><i />{children}</span>; }
+
+function Hero() {
+  return <section className="hero" id="top"><div className="hero-copy"><SectionLabel>Digital newsroom proposal · November 2026</SectionLabel><h1>One newsroom.<br /><em>Every Lawson</em><br />channel connected.</h1><p className="hero-lead">A practical plan to recover Lawson’s web presence, protect its content, and connect Lawson Media Online, Lawson TV and Lawson 96.3 FM through one dependable digital system.</p><div className="hero-actions"><a className="button button-red" href="#situation">See the opportunity <Icon name="arrow" /></a><a className="text-link" href="#investment">View investment <Icon name="arrow" /></a></div><div className="hero-note"><span className="signal"><i /><i /><i /></span><span>Prepared from a real visitor audit of the public domains and active Lawson media channels.</span></div></div><div className="hero-visual"><div className="broadcast-card"><div className="broadcast-top"><span>LAWSON LIVE</span><span className="live-dot"><i /> ON AIR</span></div><div className="broadcast-screen"><div className="screen-lines" /><span className="screen-play"><Icon name="play" /></span><strong>LAWSON<br />96.3 FM</strong><small>RADIO · TV · NEWS</small></div><div className="broadcast-footer"><span>One story</span><span>→</span><span>Many destinations</span></div></div><div className="hero-stamp"><Icon name="spark" /><span>CONNECTED<br />MEDIA<br />SYSTEM</span></div></div></section>;
 }
 
-function App() {
-  const path = window.location.pathname;
-  const [searchOpen, setSearchOpen] = useState(false);
-  const [search, setSearch] = useState('');
-  const [subscribed, setSubscribed] = useState(false);
-  const allStories = useMemo(() => [...stories.picks, ...stories.latest, ...trendStories, ...lowerSections.flatMap((section) => section.items)], []);
-  const matches = search.trim() ? allStories.filter((story) => `${story.title} ${story.category}`.toLowerCase().includes(search.toLowerCase())).slice(0, 6) : [];
-
-  useEffect(() => {
-    const onKeyDown = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') setSearchOpen(false);
-    };
-    window.addEventListener('keydown', onKeyDown);
-    return () => window.removeEventListener('keydown', onKeyDown);
-  }, []);
-
-  if (path === '/video' || path.startsWith('/video/')) return <VideoPage />;
-  if (path.startsWith('/article/')) return <ArticlePage slug={path.split('/')[2] ?? ''} />;
-  if (path === '/latest') return <ListingPage title="The Latest" eyebrow="FRESHLY PUBLISHED" intro="New reporting, useful perspectives and fresh ideas from across the PRESSRA newsroom." items={stories.latest} />;
-  if (path.startsWith('/category/')) {
-    const category = (path.split('/')[2] ?? 'world').replace(/-/g, ' ');
-    const items = [...stories.picks, ...stories.latest, ...trendStories, ...lowerSections.flatMap((section) => section.items)].filter((story) => story.category.toLowerCase() === category.toLowerCase());
-    return <ListingPage title={`${category.charAt(0).toUpperCase()}${category.slice(1)} in Perspective`} eyebrow={category.toUpperCase()} intro={`Clear-eyed stories and perspectives from across the ${category} desk.`} items={items.length ? items : stories.latest} />;
-  }
-
-  return (
-    <div className="page-shell">
-      <TopBar onSearch={() => setSearchOpen(true)} />
-      <Masthead />
-      <main>
-        <LeadGrid />
-        <section className="story-section" id="latest">
-          <div className="section-title-row"><div><span className="section-kicker">EDITOR’S PICKS</span><h2>Stories Worth Your Time</h2><p>A considered selection of the stories, perspectives and discoveries our editors think you should know.</p></div></div>
-          <div className="story-card-grid picks-grid">{stories.picks.map((story) => <StoryLink story={story} key={story.title} />)}</div>
-        </section>
-        <section className="story-section latest-section">
-          <div className="section-title-row"><div><span className="section-kicker">FRESHLY PUBLISHED</span><h2>The Latest</h2><p>New reporting, useful perspectives and fresh ideas from across the PRESSRA newsroom.</p></div></div>
-          <div className="story-card-grid latest-grid">{stories.latest.map((story) => <StoryLink story={story} key={story.title} />)}</div>
-          <a className="section-cta" href="#latest">VIEW ALL STORIES <Arrow /></a>
-        </section>
-        {lowerSections.map((section, index) => <EditorialSection key={section.title} section={section} id={['world', 'business', 'technology', 'culture', 'sports'][index]} />)}
-        <Footer onSubscribe={() => setSubscribed(true)} />
-      </main>
-      {searchOpen && <div className="search-overlay" role="dialog" aria-modal="true" aria-label="Search PRESSRA"><button className="overlay-close" onClick={() => setSearchOpen(false)} aria-label="Close search">×</button><div className="search-box"><span className="section-kicker">SEARCH PRESSRA</span><div className="search-input-wrap"><SearchIcon /><input autoFocus value={search} onChange={(event) => setSearch(event.target.value)} placeholder="Search stories, sections and ideas" /></div>{search.trim() ? <div className="search-results">{matches.length ? matches.map((story) => <a href={story.href ?? `/article/${slugify(story.title)}`} key={`${story.category}-${story.title}`} onClick={() => setSearchOpen(false)}><span>{story.category}</span><strong>{story.title}</strong></a>) : <p>No stories found.</p>}</div> : <p className="search-hint">Try “technology”, “world” or “cities”.</p>}</div></div>}
-      {subscribed && <div className="toast" role="status"><strong>You’re on the list.</strong><span>The PRESSRA briefing is coming your way.</span><button onClick={() => setSubscribed(false)} aria-label="Dismiss">×</button></div>}
-    </div>
-  );
+function Situation() {
+  return <section className="section situation" id="situation"><div className="section-intro"><SectionLabel tone="amber">What we found</SectionLabel><h2>The audience is there.<br /><em>The digital bridge is not.</em></h2><p>Lawson is actively producing news, radio and television content. But a visitor trying to reach the official web presence is currently met with a serious trust and continuity problem.</p></div><div className="evidence-grid"><article className="evidence-card critical"><div className="evidence-icon"><Icon name="alert" /></div><div><span className="evidence-status">Critical · Lawson Media Online</span><h3>The main domain is parked as expired.</h3><p>Real-user testing showed a Namecheap “Domain registration has expired” page. HTTPS failed, and representative category, article and live-radio paths returned 404 responses.</p><a href="https://lawsonmediaonline.com/" target="_blank" rel="noreferrer">View domain state <Icon name="arrow" /></a></div></article><article className="evidence-card danger"><div className="evidence-icon"><Icon name="alert" /></div><div><span className="evidence-status">Security · Lawson Multimedia</span><h3>The domain redirects to an unrelated destination.</h3><p>Real-user testing redirected Lawson Multimedia away from the Lawson brand toward tracking/survey infrastructure. This should be treated as a domain, DNS or account-security issue.</p><a href="https://lawsonmultimedia.com/" target="_blank" rel="noreferrer">Check the domain <Icon name="arrow" /></a></div></article><article className="evidence-card alive"><div className="evidence-icon"><Icon name="check" /></div><div><span className="evidence-status">Opportunity · Lawson channels</span><h3>The media operation is active outside the domains.</h3><p>Lawson TV and Lawson 96.3 FM continue to publish broadcasts and live programmes through YouTube and Facebook. The new system should bring that activity back to an owned home.</p><a href="https://www.youtube.com/@L963mediagh_live" target="_blank" rel="noreferrer">See active channel <Icon name="arrow" /></a></div></article></div></section>;
 }
+
+function Impact() {
+  return <section className="impact"><div><span className="impact-number">01</span><strong>Trust</strong><p>A parked or redirected domain makes an active media brand look unavailable or unsafe.</p></div><div><span className="impact-number">02</span><strong>Continuity</strong><p>Old articles, categories and media links cannot reliably bring audiences back.</p></div><div><span className="impact-number">03</span><strong>Revenue</strong><p>Advertisers and partners need a dependable platform where audiences can be measured.</p></div><div><span className="impact-number">04</span><strong>Workflow</strong><p>Radio, TV, website and social activity can feel like separate operations instead of one group.</p></div></section>;
+}
+
+function Solution() {
+  return <section className="section solution" id="solution"><div className="section-intro split"><div><SectionLabel tone="green">The proposed solution</SectionLabel><h2>Recover the foundation.<br /><em>Then connect the newsroom.</em></h2></div><p>We are not proposing that Lawson throws away its identity or content. We secure what already exists, restore public trust, and build a system that lets the team publish once and distribute with control.</p></div><div className="deliverable-grid">{deliverables.map((item) => <article className="deliverable" key={item.number}><span className="deliverable-number">{item.number}</span><h3>{item.title}</h3><p>{item.text}</p><span className="deliverable-line" /></article>)}</div></section>;
+}
+
+function Workflow() {
+  const [active, setActive] = useState(0);
+  const workflowItems = ['Create once', 'Review together', 'Publish everywhere'];
+  return <section className="section workflow" id="workflow"><div className="section-intro centered"><SectionLabel>How the new system works</SectionLabel><h2>One newsroom entry.<br /><em>Many controlled outputs.</em></h2><p>The newsroom keeps one source of truth. Every channel gets the right format, the right approval, and a visible publishing status.</p></div><div className="workflow-diagram"><div className="workflow-source"><span className="node-kicker">THE SOURCE</span><div className="source-icon">L</div><strong>One newsroom<br />dashboard</strong><small>Article · video · audio · live</small></div><div className="workflow-line"><span>→</span></div><div className="workflow-destinations">{['Website', 'Lawson TV', '96.3 FM', 'YouTube', 'Social', 'Newsletter'].map((item) => <span key={item}><i />{item}</span>)}</div></div><div className="workflow-tabs">{workflowItems.map((item, index) => <button className={active === index ? 'active' : ''} onClick={() => setActive(index)} key={item}><span>0{index + 1}</span>{item}</button>)}</div><div className="workflow-detail">{active === 0 && <><SectionLabel tone="green">Step one</SectionLabel><h3>Create once, with all the context attached.</h3><p>An editor adds the headline, story, image, video, author, category, publish time and channel choices in one structured record.</p></>}{active === 1 && <><SectionLabel tone="amber">Step two</SectionLabel><h3>Review together, before anything goes live.</h3><p>Editors and managers can draft, assign, approve, schedule and see exactly who has changed what. Nothing disappears in a group chat.</p></>}{active === 2 && <><SectionLabel tone="red">Step three</SectionLabel><h3>Publish everywhere, with visibility.</h3><p>The system sends or prepares the right version for the website, YouTube, newsletter and social channels, with a status log for every destination.</p></>}</div></section>;
+}
+
+function Architecture() {
+  return <section className="section architecture"><div className="section-intro"><SectionLabel tone="green">Built to be owned by Lawson</SectionLabel><h2>Modern under the hood.<br /><em>Simple for the newsroom.</em></h2><p>We can build this without WordPress. The public website and the newsroom system remain modular, portable and maintainable by more than one developer.</p></div><div className="stack"><div className="stack-layer public"><span>01</span><div><strong>Public experience</strong><small>Astro or Next.js website · SEO · speed · mobile</small></div><b>LAWSON.MEDIA</b></div><div className="stack-connector" /><div className="stack-layer cms"><span>02</span><div><strong>Newsroom brain</strong><small>Payload or Directus · roles · workflow · API</small></div><b>CONTENT</b></div><div className="stack-connector" /><div className="stack-layer data"><span>03</span><div><strong>Reliable foundations</strong><small>PostgreSQL · media storage · backups · analytics</small></div><b>DATA</b></div><div className="stack-connector" /><div className="stack-layer channels"><span>04</span><div><strong>Connected channels</strong><small>TV · radio · YouTube · newsletter · social</small></div><b>REACH</b></div></div><div className="architecture-note"><Icon name="check" /><p><strong>No WordPress required.</strong> Lawson owns the domain, source code, database, media and publishing workflow. Third-party services are replaceable rather than being the foundation of the business.</p></div></section>;
+}
+
+function Phases() { return <section className="section phases"><div className="section-intro split"><div><SectionLabel tone="amber">A measured rollout</SectionLabel><h2>Stabilise first.<br /><em>Build with confidence.</em></h2></div><p>We do not ask the team to change everything in one weekend. Each phase produces something useful and gives Lawson a clear decision point.</p></div><div className="phase-grid">{phases.map((phase) => <article className="phase" key={phase.label}><div className="phase-top"><span>{phase.label}</span><small>{phase.duration}</small></div><h3>{phase.title}</h3><p>{phase.text}</p><ul>{phase.items.map((item) => <li key={item}><Icon name="check" />{item}</li>)}</ul></article>)}</div></section>; }
+
+function Pricing() {
+  return <section className="section investment" id="investment"><div className="section-intro centered"><SectionLabel tone="green">Transparent investment</SectionLabel><h2>Choose the outcome<br /><em>Lawson needs first.</em></h2><p>These ranges separate developer/build work from domain recovery, hosting, third-party services and ongoing support. A final fixed quote follows the discovery audit.</p></div><div className="launch-summary"><div><span>Recommended first launch envelope</span><strong>GHS 98,000–200,000</strong><small>Recovery + unified newsroom build, before variable third-party operating costs.</small></div><div><span>Developer / build scope</span><strong>GHS 90,000–180,000</strong><small>Design, engineering, CMS, migration tools, training and launch.</small></div><div><span>Ongoing support from</span><strong>GHS 3,000 / month</strong><small>Choose Care, Managed newsroom or Growth partner after launch.</small></div></div><div className="pricing-grid">{packages.map((pkg) => <article className={`price-card ${pkg.tag === 'RECOMMENDED' ? 'featured' : ''}`} key={pkg.title}><span className="price-tag">{pkg.tag}</span><h3>{pkg.title}</h3><strong className="price">{pkg.price}</strong><p>{pkg.text}</p><ul>{pkg.items.map((item) => <li key={item}><Icon name="check" />{item}</li>)}</ul><a href="#contact">Discuss this scope <Icon name="arrow" /></a></article>)}</div><div className="cost-note"><span>Important cost separation</span><p><strong>Developer/build cost</strong> covers design, engineering, setup, migration tools and training. <strong>Separate operating costs</strong> may include domain renewal/redemption, hosting, email delivery, storage, video/CDN usage, SMS, third-party APIs and paid platform accounts. We will list these before approval.</p></div></section>;
+}
+
+function Support() { return <section className="section support"><div className="section-intro split"><div><SectionLabel>After launch</SectionLabel><h2>Keep the system<br /><em>healthy and useful.</em></h2></div><p>A newsroom platform is not finished when it goes live. Lawson can choose a support level that matches its operating rhythm and internal team.</p></div><div className="support-grid">{support.map((item) => <article className="support-card" key={item.title}><span>{item.title}</span><h3>{item.price}</h3><p>{item.text}</p><a href="#contact">Ask about this plan <Icon name="arrow" /></a></article>)}</div></section>; }
+
+function FAQ() { const [open, setOpen] = useState<number | null>(0); const faqs = [['Can we avoid WordPress?', 'Yes. The recommended route is a custom Astro or Next.js public site with Payload or Directus as the headless newsroom system. Lawson keeps ownership of the code and data.'], ['Can one editor publish to every channel?', 'The editor can create one source record and control all outputs from one dashboard. Where a platform API allows automatic publishing, we automate it. Where approval is required, the system prepares the post and tracks the final manual action.'], ['Will we lose the old articles?', 'That is not the plan. We first inventory the old URLs and content, restore or export what is available, migrate priority stories, and create redirects so valuable links keep working.'], ['What is not included in the project price?', 'Domain redemption, hosting, email, storage, paid APIs, video/CDN usage, advertising spend, app-store fees and ongoing content production are separate operating costs unless specifically included in the final statement of work.']]; return <section className="section faq"><div className="section-intro"><SectionLabel tone="amber">A few practical answers</SectionLabel><h2>Clear before<br /><em>we begin.</em></h2></div><div className="faq-list">{faqs.map(([question, answer], index) => <div className={`faq-item ${open === index ? 'open' : ''}`} key={question}><button aria-expanded={open === index} aria-controls={`faq-answer-${index}`} onClick={() => setOpen(open === index ? null : index)}><span>0{index + 1}</span><strong>{question}</strong><b>{open === index ? '−' : '+'}</b></button>{open === index && <p id={`faq-answer-${index}`}>{answer}</p>}</div>)}</div></section>; }
+
+function Contact() { return <section className="contact" id="contact"><div><SectionLabel tone="red">The next conversation</SectionLabel><h2>Let’s protect what Lawson has built — <em>and make it easier to grow.</em></h2><p>Start with a short discovery session. We will confirm domain ownership, understand the newsroom workflow, and turn this proposal into a fixed scope with a clear delivery plan.</p></div><div className="contact-card"><span>Suggested first meeting</span><strong>90 minutes</strong><small>Domains · content · broadcast · workflow · revenue</small><a className="button button-light" href="mailto:hello@lawsonmediaonline.com?subject=Lawson%20digital%20newsroom%20proposal">Start the conversation <Icon name="arrow" /></a><small>No obligation. The first goal is clarity.</small></div></section>; }
+
+function Footer() { return <footer className="footer"><div className="footer-brand"><a className="brand" href="#top"><span className="brand-mark">L</span><span>LAWSON<br /><small>MEDIA GROUP</small></span></a><p>A connected digital newsroom proposal for Lawson Media, Lawson TV and Lawson 96.3 FM.</p></div><div className="footer-meta"><span>Prepared November 2026</span><span>Confidential discussion document</span><a href="#top">Back to top ↑</a></div></footer>; }
+
+function App() { return <div className="pitch"><Header /><main><Hero /><Situation /><Impact /><Solution /><Workflow /><Architecture /><Phases /><Pricing /><Support /><FAQ /><Contact /></main><Footer /></div>; }
 
 createRoot(document.getElementById('root')!).render(<App />);
